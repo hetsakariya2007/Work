@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storage Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        .messages {
+            margin-top: 20px;
+        }
+        h3 {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Save Messages in LocalStorage and SessionStorage</h2>
+
+<label for="msgInput">Enter Message:</label><br>
+<input type="text" id="msgInput" placeholder="Type your message" />
+<br>
+<button id="saveLocalBtn">Save in localStorage</button>
+<button id="saveSessionBtn">Save in sessionStorage</button>
+
+<div class="messages">
+    <h3>LocalStorage Messages:</h3>
+    <ul id="localMessages"></ul>
+
+    <h3>SessionStorage Messages:</h3>
+    <ul id="sessionMessages"></ul>
+</div>
+
+<script>
+    const msgInput = document.getElementById("msgInput");
+    const saveLocalBtn = document.getElementById("saveLocalBtn");
+    const saveSessionBtn = document.getElementById("saveSessionBtn");
+    const localMessages = document.getElementById("localMessages");
+    const sessionMessages = document.getElementById("sessionMessages");
+
+    // Function to display messages
+    function displayMessages(storageKey, listElement, storageType) {
+        listElement.innerHTML = ""; // clear existing
+        let messages = JSON.parse(storageType.getItem(storageKey)) || [];
+        messages.forEach(msg => {
+            const li = document.createElement("li");
+            li.textContent = msg;
+            listElement.appendChild(li);
+        });
+    }
+
+    // Save to localStorage
+    saveLocalBtn.addEventListener("click", () => {
+        const msg = msgInput.value.trim();
+        if (msg) {
+            let messages = JSON.parse(localStorage.getItem("localMsgs")) || [];
+            messages.push(msg);
+            localStorage.setItem("localMsgs", JSON.stringify(messages));
+            displayMessages("localMsgs", localMessages, localStorage);
+            msgInput.value = "";
+        }
+    });
+
+    // Save to sessionStorage
+    saveSessionBtn.addEventListener("click", () => {
+        const msg = msgInput.value.trim();
+        if (msg) {
+            let messages = JSON.parse(sessionStorage.getItem("sessionMsgs")) || [];
+            messages.push(msg);
+            sessionStorage.setItem("sessionMsgs", JSON.stringify(messages));
+            displayMessages("sessionMsgs", sessionMessages, sessionStorage);
+            msgInput.value = "";
+        }
+    });
+
+    // Load messages on page load
+    window.onload = () => {
+        displayMessages("localMsgs", localMessages, localStorage);
+        displayMessages("sessionMsgs", sessionMessages, sessionStorage);
+    };
+</script>
+
+</body>
+</html>
